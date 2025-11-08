@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="garden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bark 推送配置生成器</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.5.0/dist/full.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
+            max-width: 56rem; /* 固定最大宽度 */
+            overflow: hidden; /* 防止内容溢出 */
+        }
+        body {
+            background: linear-gradient(135deg, #d4f1f4 0%, #a8e6cf 100%);
+            min-height: 100vh;
+            scrollbar-gutter: stable;
+        }
+        html {
+            scrollbar-gutter: stable;
+        }
+        /* 防止表单内容溢出 */
+        #bark-form {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        @media (max-width: 640px) {
+            .glass-card { margin: 0.5rem; padding: 1rem; }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+            .stat { padding: 0.75rem; }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-4xl glass-card p-8 my-8">
+        <header class="mb-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <h1 class="text-3xl font-bold text-primary flex items-center gap-2">
+                    <i data-lucide="bell-ring" class="h-8 w-8"></i>
+                    Bark 推送配置
+                </h1>
+                <div class="flex gap-2">
+                    <button onclick="loadExample()" class="btn btn-sm btn-outline">
+                        <i data-lucide="lightbulb" class="h-4 w-4"></i> 示例
+                    </button>
+                    <button onclick="testPush()" class="btn btn-sm btn-primary">
+                        <i data-lucide="send" class="h-4 w-4"></i> 测试
+                    </button>
+                </div>
+            </div>
+            <p class="text-base-content/70 mt-2">快速生成 Bark 推送配置</p>
+        </header>
+
+        <!-- 基础配置 -->
+        <div class="divider">基础配置</div>
+        <form id="bark-form" class="space-y-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Server URL</span></label>
+                    <input type="text" id="server-url" value="https://api.day.app" class="input input-bordered w-full" required>
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-medium">Device Key</span></label>
+                    <input type="text" id="device-key" placeholder="your_device_key" class="input input-bordered w-full" required>
+                </div>
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text font-medium">标题</span></label>
+                <input type="text" id="title" placeholder="推送标题" class="input input-bordered w-full">
+            </div>
+
+            <div class="form-control">
+                <label class="label"><span class="label-text font-medium">内容</span></label>
+                <textarea id="body" placeholder="推送内容" class="textarea textarea-bordered" rows="3" required></textarea>
+            </div>
+
+            <div class="divider">高级选项</div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">副标题</span></label>
+                            <input type="text" id="subtitle" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">分组</span></label>
+                            <input type="text" id="group" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text">推送级别</span>
+                                <span class="label-text-alt text-xs">?</span>
+                            </label>
+                            <select id="level" class="select select-bordered w-full">
+                                <option value="">active - 立即亮屏显示</option>
+                                <option value="timeSensitive">timeSensitive - 专注模式也显示</option>
+                                <option value="passive">passive - 仅添加到列表</option>
+                                <option value="critical">critical - 静音也响铃</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">铃声</span></label>
+                            <select id="sound" class="select select-bordered w-full">
+                                <option value="">默认</option>
+                                <option value="alarm">alarm</option>
+                                <option value="anticipate">anticipate</option>
+                                <option value="bell">bell</option>
+                                <option value="birdsong">birdsong</option>
+                                <option value="bloom">bloom</option>
+                                <option value="calypso">calypso</option>
+                                <option value="chime">chime</option>
+                                <option value="choo">choo</option>
+                                <option value="descent">descent</option>
+                                <option value="electronic">electronic</option>
+                                <option value="fanfare">fanfare</option>
+                                <option value="glass">glass</option>
+                                <option value="gotosleep">gotosleep</option>
+                                <option value="healthnotification">healthnotification</option>
+                                <option value="horn">horn</option>
+                                <option value="ladder">ladder</option>
+                                <option value="mailsent">mailsent</option>
+                                <option value="minuet">minuet</option>
+                                <option value="multiwayinvitation">multiwayinvitation</option>
+                                <option value="newmail">newmail</option>
+                                <option value="newsflash">newsflash</option>
+                                <option value="noir">noir</option>
+                                <option value="paymentsuccess">paymentsuccess</option>
+                                <option value="shake">shake</option>
+                                <option value="sherwoodforest">sherwoodforest</option>
+                                <option value="silence">silence</option>
+                                <option value="spell">spell</option>
+                                <option value="suspense">suspense</option>
+                                <option value="telegraph">telegraph</option>
+                                <option value="tiptoes">tiptoes</option>
+                                <option value="typewriters">typewriters</option>
+                                <option value="update">update</option>
+                            </select>
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">角标</span></label>
+                            <input type="number" id="badge" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">图标URL</span></label>
+                            <input type="url" id="icon" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">跳转URL</span></label>
+                            <input type="url" id="url" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">复制内容</span></label>
+                            <input type="text" id="copy" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">音量 (0-10)</span></label>
+                            <input type="number" id="volume" min="0" max="10" placeholder="5" class="input input-bordered w-full">
+                        </div>
+                        <div class="form-control">
+                            <label class="label"><span class="label-text">通知ID</span></label>
+                            <input type="text" id="notification-id" placeholder="用于更新或删除" class="input input-bordered w-full">
+                        </div>
+                    </div>
+
+            <div class="flex flex-wrap gap-4">
+                        <label class="label cursor-pointer gap-2">
+                            <input type="checkbox" id="isArchive" class="checkbox checkbox-sm">
+                            <span class="label-text">保存推送</span>
+                        </label>
+                        <label class="label cursor-pointer gap-2">
+                            <input type="checkbox" id="autoCopy" class="checkbox checkbox-sm">
+                            <span class="label-text">自动复制</span>
+                        </label>
+                        <label class="label cursor-pointer gap-2">
+                            <input type="checkbox" id="call" class="checkbox checkbox-sm">
+                            <span class="label-text">持续响铃</span>
+                        </label>
+                        <label class="label cursor-pointer gap-2">
+                            <input type="checkbox" id="action-none" class="checkbox checkbox-sm">
+                            <span class="label-text">点击无反应</span>
+                        </label>
+                        <label class="label cursor-pointer gap-2">
+                            <input type="checkbox" id="delete-notification" class="checkbox checkbox-sm">
+                            <span class="label-text">删除通知</span>
+                        </label>
+                    </div>
+
+            <div class="flex gap-2 justify-end flex-wrap">
+                <button type="button" onclick="resetForm()" class="btn btn-sm btn-outline">
+                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i> 重置
+                </button>
+                <button type="button" onclick="saveConfig()" class="btn btn-sm btn-info">
+                    <i data-lucide="save" class="h-4 w-4"></i> 保存
+                </button>
+                <button type="button" onclick="generateConfig()" class="btn btn-sm btn-success">
+                    <i data-lucide="code" class="h-4 w-4"></i> 生成
+                </button>
+            </div>
+        </form>
+
+        <!-- 生成结果 -->
+        <div id="result-section" class="hidden">
+            <div class="divider">生成结果</div>
+            <div class="tabs tabs-boxed mb-4">
+                <a class="tab tab-active" onclick="switchTab('url')">GET URL</a>
+                <a class="tab" onclick="switchTab('json')">JSON</a>
+                <a class="tab" onclick="switchTab('php')">PHP</a>
+                <a class="tab" onclick="switchTab('curl')">cURL</a>
+            </div>
+
+            <div id="tab-url" class="card bg-base-100">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">GET URL</h3>
+                        <button onclick="copyResult('url')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-url"></code></pre>
+                </div>
+            </div>
+
+            <div id="tab-json" class="card bg-base-100 hidden">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">JSON</h3>
+                        <button onclick="copyResult('json')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-json"></code></pre>
+                </div>
+            </div>
+
+            <div id="tab-php" class="card bg-base-100 hidden">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">PHP</h3>
+                        <button onclick="copyResult('php')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-php"></code></pre>
+                </div>
+            </div>
+
+            <div id="tab-curl" class="card bg-base-100 hidden">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">cURL</h3>
+                        <button onclick="copyResult('curl')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-curl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 保存的配置 -->
+        <div class="divider">保存的配置</div>
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>名称</th>
+                        <th class="hidden sm:table-cell">内容</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="configs-table">
+                    <tr>
+                        <td colspan="4" class="text-center text-base-content/60 py-8">
+                            <i data-lucide="inbox" class="h-8 w-8 mx-auto opacity-50"></i>
+                            <p class="mt-2">暂无配置</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast-container" class="toast toast-top toast-end"></div>
+
+    <!-- 删除确认模态框 -->
+    <dialog id="delete_modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg flex items-center gap-2">
+                <i data-lucide="alert-triangle" class="h-5 w-5 text-warning"></i>
+                确认删除
+            </h3>
+            <p class="py-4">确定要删除这个配置吗？此操作无法撤销。</p>
+            <div class="modal-action">
+                <form method="dialog" class="flex gap-2">
+                    <button class="btn btn-ghost">取消</button>
+                    <button class="btn btn-error" onclick="confirmDelete()">删除</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>关闭</button>
+        </form>
+    </dialog>
+
+    <footer class="text-center text-sm text-base-content/60 mb-4">
+        <p>Bark 推送配置生成器 | <a href="https://bark.day.app" target="_blank" class="link">官方文档</a> | <a href="https://jk.sb" target="_blank" class="link">博客</a></p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script nonce="lucide-init">
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -71,6 +71,26 @@ function generateConfig() {
     php += '    );';
     document.getElementById('result-php').textContent = php;
     
+    // 生成 Python
+    let python = `import requests\n\n`;
+    python += `url = "${serverUrl}/push"\n`;
+    python += `data = ${JSON.stringify(json, null, 4).replace(/"([^"]+)":/g, '"$1":')}\n\n`;
+    python += `response = requests.post(url, json=data)\n`;
+    python += `print(response.json())`;
+    document.getElementById('result-python').textContent = python;
+    
+    // 生成 Node.js
+    let nodejs = `const axios = require('axios');\n\n`;
+    nodejs += `const data = ${JSON.stringify(json, null, 2)};\n\n`;
+    nodejs += `axios.post('${serverUrl}/push', data)\n`;
+    nodejs += `  .then(response => {\n`;
+    nodejs += `    console.log(response.data);\n`;
+    nodejs += `  })\n`;
+    nodejs += `  .catch(error => {\n`;
+    nodejs += `    console.error(error);\n`;
+    nodejs += `  });`;
+    document.getElementById('result-nodejs').textContent = nodejs;
+    
     // 生成 cURL
     const curl = `curl -X "POST" "${serverUrl}/push" \\
      -H 'Content-Type: application/json; charset=utf-8' \\
@@ -78,13 +98,19 @@ function generateConfig() {
     document.getElementById('result-curl').textContent = curl;
     
     document.getElementById('result-section').classList.remove('hidden');
+    
+    // 应用代码高亮
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+    });
+    
     showToast('配置生成成功', 'success');
     lucide.createIcons();
 }
 
 // 切换标签
 function switchTab(tab) {
-    ['url', 'json', 'php', 'curl'].forEach(t => {
+    ['url', 'json', 'php', 'python', 'nodejs', 'curl'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
         document.querySelector(`[onclick="switchTab('${t}')"]`).classList.toggle('tab-active', t === tab);
     });

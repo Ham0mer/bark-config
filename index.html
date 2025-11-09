@@ -11,11 +11,13 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
         .glass-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(12px);
-            border-radius: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
             max-width: 56rem; /* 固定最大宽度 */
@@ -29,15 +31,22 @@
         html {
             scrollbar-gutter: stable;
         }
-        /* 防止表单内容溢出 */
         #bark-form {
             max-width: 100%;
             overflow-x: hidden;
         }
+        pre {
+            margin: 0;
+            overflow-x: auto;
+        }
+        pre code {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            padding: 1rem;
+            display: block;
+        }
         @media (max-width: 640px) {
             .glass-card { margin: 0.5rem; padding: 1rem; }
-            .stats { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-            .stat { padding: 0.75rem; }
         }
     </style>
 </head>
@@ -215,6 +224,8 @@
                 <a class="tab tab-active" onclick="switchTab('url')">GET URL</a>
                 <a class="tab" onclick="switchTab('json')">JSON</a>
                 <a class="tab" onclick="switchTab('php')">PHP</a>
+                <a class="tab" onclick="switchTab('python')">Python</a>
+                <a class="tab" onclick="switchTab('nodejs')">Node.js</a>
                 <a class="tab" onclick="switchTab('curl')">cURL</a>
             </div>
 
@@ -226,7 +237,7 @@
                             <i data-lucide="copy" class="h-3 w-3"></i> 复制
                         </button>
                     </div>
-                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-url"></code></pre>
+                    <pre><code id="result-url" class="language-plaintext"></code></pre>
                 </div>
             </div>
 
@@ -238,7 +249,7 @@
                             <i data-lucide="copy" class="h-3 w-3"></i> 复制
                         </button>
                     </div>
-                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-json"></code></pre>
+                    <pre><code id="result-json" class="language-json"></code></pre>
                 </div>
             </div>
 
@@ -250,7 +261,31 @@
                             <i data-lucide="copy" class="h-3 w-3"></i> 复制
                         </button>
                     </div>
-                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-php"></code></pre>
+                    <pre><code id="result-php" class="language-php"></code></pre>
+                </div>
+            </div>
+
+            <div id="tab-python" class="card bg-base-100 hidden">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">Python</h3>
+                        <button onclick="copyResult('python')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre><code id="result-python" class="language-python"></code></pre>
+                </div>
+            </div>
+
+            <div id="tab-nodejs" class="card bg-base-100 hidden">
+                <div class="card-body p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">Node.js</h3>
+                        <button onclick="copyResult('nodejs')" class="btn btn-sm btn-primary">
+                            <i data-lucide="copy" class="h-3 w-3"></i> 复制
+                        </button>
+                    </div>
+                    <pre><code id="result-nodejs" class="language-javascript"></code></pre>
                 </div>
             </div>
 
@@ -262,7 +297,7 @@
                             <i data-lucide="copy" class="h-3 w-3"></i> 复制
                         </button>
                     </div>
-                    <pre class="bg-base-200 p-3 rounded text-xs overflow-x-auto"><code id="result-curl"></code></pre>
+                    <pre><code id="result-curl" class="language-bash"></code></pre>
                 </div>
             </div>
         </div>
